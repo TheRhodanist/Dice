@@ -1,11 +1,8 @@
 import tkinter as tk
 import random as ran
 import threading as threading
-from time import sleep
-import sys
 import socket
-import select
-import json
+
 
 class App(tk.Frame):
     def __init__(self):
@@ -18,6 +15,7 @@ class App(tk.Frame):
         self.history = False
         self.msg = None
         self.server = None
+        self.coinResult = False
         self.initUI()
 
 
@@ -62,6 +60,12 @@ class App(tk.Frame):
 
         self.lblHistory = tk.Label(self.master, text="History", font=('Helvetica', 12))
         self.lblHistory.place(x=405, y=195)
+
+    def coinFlip(self):
+        if(ran.random() > 0.5):
+            self.coinResult = True
+        else:
+            self.coinResult = False
 
 
 
