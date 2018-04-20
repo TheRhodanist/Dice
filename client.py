@@ -1,7 +1,8 @@
 import tkinter as tk
-import random as ran
+import random as rnd
 import threading as threading
 import socket
+import json
 
 
 class App(tk.Frame):
@@ -10,12 +11,10 @@ class App(tk.Frame):
         self.rDice = tk.IntVar()
         self.sNumDice = tk.IntVar()
         self.playerName = tk.StringVar()
+        self.me = tk.StringVar()
         self.concResult = tk.StringVar()
         self.resultSum = tk.IntVar()
-        self.history = False
-        self.msg = None
         self.server = None
-        self.coinResult = False
         self.initUI()
 
 
@@ -37,7 +36,7 @@ class App(tk.Frame):
         self.btnCoin = tk.Button(self.master, text="Coinflip", width=6, command=self.woot)
         self.btnCoin.place(x=265, y=30)
 
-        self.btnRoll = tk.Button(self.master, text="Roll", width=6)
+        self.btnRoll = tk.Button(self.master, text="Roll", width=6, state=tk.DISABLED, command=self.roll)
         self.btnRoll.place(x=265, y=75)
 
         self.lblResultPlayer = tk.Label(self.master, textvariable=self.playerName, font=('Helvetica', 30))
@@ -52,6 +51,12 @@ class App(tk.Frame):
         self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
         self.lbPlayer.place(x=400, y=40)
 
+        self.eMe = tk.Entry(self.master, textvariable=self.me)
+        self.eMe.place(x=460, y=10)
+
+        self.btnSubmitName = tk.Button(self.master, text="Ok", command=self.submitName)
+        self.btnSubmitName.place(x=660, y=10)
+
         self.lbHistory = tk.Listbox(self.master, width=40, height=7)
         self.lbHistory.place(x=400, y=230)
 
@@ -62,31 +67,42 @@ class App(tk.Frame):
         self.lblHistory.place(x=405, y=195)
 
     def coinFlip(self):
-        if(ran.random() > 0.5):
-            self.coinResult = True
-        else:
-            self.coinResult = False
+        return rnd.randint(0,1)
 
+    def submitName(self):
+        if self.me.get() == '':
+            return
+        data = {'action': 'submitName'}
+        data.update({'name': self.me.get()})
+        self.eMe.lower()
+        self.btnSubmitName.lower()
+        self.btnRoll.configure(state=tk.NORMAL)
+        self.sendMessage(data)
 
+    def roll(self):
+        data = {'action': 'roll'}
+        data['rolls'] = []
+        for n in range(0, self.sNumDice.get()):
+            data['rolls'].append(rnd.randint(1, self.rDice.get()))
+        self.sendMessage(data)
 
     def woot(self):
         self.playerName.set("Marci rollt:")
         self.concResult.set("3 + 5 + 6")
         self.resultSum.set(30)
         self.sendMessage(b"Marci:3D6-3/5/6-14")
-        self.lbHistory.insert(tk.END, "foo")
+        self.lbHistory.insert(0, "foo")
 
-    def update(self, message):
-        #self.history.append(message)
-        #self.lbHistory.redraw()
+    def update(self, _data):
+        data = json.loads(_data.decode())
+        self.lbHistory.insert(0, data)
 
-        self.lbHistory.insert(tk.END, message)
 
     def setServer(self, serv):
         self.server = serv
 
-    def sendMessage(self, message):
-        self.server.send(message)
+    def sendMessage(self, data):
+        self.server.send(json.dumps(data).encode())
 
 
 class ServerApp(threading.Thread):
@@ -95,12 +111,12 @@ class ServerApp(threading.Thread):
     host = ""
     port = 0
     callback = False
-    running = True
 
     def __init__(self, ip, port, function):
         super().__init__()
         self.host = ip
         self.port = port
+        self.running = True
         self.callback = function
 
     def run(self):
@@ -118,15 +134,14 @@ class ServerApp(threading.Thread):
         self.sock.sendall(message)
 
     def listen(self):
-        message = self.sock.recv(4096)
-        if message=="EXIT":
-            self.running = False
-            self.close()
-        else:
-
-            self.callback(message)
+        try:
+            message = self.sock.recv(4096)
+        except OSError:
+            return
+        self.callback(message)
 
     def close(self):
+        self.running = False
         self.sock.close()
         print("Socket Closed")
 
@@ -136,6 +151,7 @@ def main():
     def close():
         root.destroy()
         server.close()
+
     root = tk.Tk()
     app = App()
     root.protocol("WM_DELETE_WINDOW", close)
