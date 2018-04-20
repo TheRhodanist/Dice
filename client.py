@@ -36,17 +36,17 @@ class App(tk.Frame):
         self.btnCoin = tk.Button(self.master, text="Coinflip", width=6, command=self.woot)
         self.btnCoin.place(x=265, y=30)
 
-        self.btnRoll = tk.Button(self.master, text="Roll", width=6, state=tk.DISABLED, command=self.roll)
+        self.btnRoll = tk.Button(self.master, text="Roll", width=6, state=tk.NORMAL, command=self.roll)
         self.btnRoll.place(x=265, y=75)
 
         self.lblResultPlayer = tk.Label(self.master, textvariable=self.playerName, font=('Helvetica', 30))
-        self.lblResultPlayer.place(x=85, y=160)
+        self.lblResultPlayer.place(x=70, y=160)
 
         self.lblResult = tk.Label(self.master, textvariable=self.concResult, font=('Helvetica', 25))
-        self.lblResult.place(x=100, y=220)
+        self.lblResult.place(x=70, y=230)
 
         self.lblResultSum = tk.Label(self.master, textvariable=self.resultSum, font=('Helvetica', 45))
-        self.lblResultSum.place(x=120, y=270)
+        self.lblResultSum.place(x=70, y=280)
 
         self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
         self.lbPlayer.place(x=400, y=40)
@@ -80,11 +80,14 @@ class App(tk.Frame):
         self.sendMessage(data)
 
     def roll(self):
-        data = {'action': 'roll'}
+        data = {'action': 'roll', 'dice': self.rDice.get(), 'name': self.me.get()}
         data['rolls'] = []
         for n in range(0, self.sNumDice.get()):
             data['rolls'].append(rnd.randint(1, self.rDice.get()))
         self.sendMessage(data)
+        self.concResult.set('')
+        self.resultSum.set('')
+        self.playerName.set('')
 
     def woot(self):
         self.playerName.set("Marci rollt:")
@@ -96,6 +99,24 @@ class App(tk.Frame):
     def update(self, _data):
         data = json.loads(_data.decode())
         self.lbHistory.insert(0, data)
+        if data['action'] == 'roll':
+            resStr = ''
+            self.concResult.set('')
+            self.resultSum.set('')
+            self.playerName.set(data['name'] + ' rollt:')
+            for n in data['rolls'][:-1]:
+                resStr += str(n) + ' + '
+            else:
+                resStr += str(data['rolls'][-1])
+            self.concResult.set(resStr)
+            hist = data['name'] + ' {}D{}: '.format(len(data['rolls']), data['dice']) + self.concResult.get() + '     '
+            if data['dice'] == 6:
+                self.resultSum.set(sum(data['rolls']))
+                hist += ' [{}]'.format(sum(data['rolls']))
+            else:
+                self.resultSum.set('')
+            self.lbHistory.insert(0, hist)
+            
 
 
     def setServer(self, serv):
@@ -144,7 +165,6 @@ class ServerApp(threading.Thread):
         self.running = False
         self.sock.close()
         print("Socket Closed")
-
 
 
 def main():
