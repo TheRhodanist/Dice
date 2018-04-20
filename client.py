@@ -51,8 +51,8 @@ class App(tk.Frame):
         self.lblResultSum = tk.Label(self.master, textvariable=self.resultSum, font=('Helvetica', 45))
         self.lblResultSum.place(x=70, y=280)
 
-        self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
-        self.lbPlayer.place(x=400, y=40)
+        # self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
+        # self.lbPlayer.place(x=400, y=40)
 
         self.eMe = tk.Entry(self.master, textvariable=self.me)
         self.eMe.place(x=460, y=10)
@@ -60,18 +60,17 @@ class App(tk.Frame):
         self.btnSubmitName = tk.Button(self.master, text="Ok", command=self.submitName)
         self.btnSubmitName.place(x=660, y=10)
 
-        self.lbHistory = tk.Listbox(self.master, width=40, height=7)
-        self.lbHistory.place(x=400, y=230)
+        self.lbHistory = tk.Listbox(self.master, width=40, height=16)
+        self.lbHistory.place(x=400, y=40)
 
-        self.lblPlayer = tk.Label(self.master, text="Player", font=('Helvetica', 12))
-        self.lblPlayer.place(x=405, y=5)
+        # self.lblPlayer = tk.Label(self.master, text="Player", font=('Helvetica', 12))
+        # self.lblPlayer.place(x=405, y=5)
 
         self.lblHistory = tk.Label(self.master, text="History", font=('Helvetica', 12))
-        self.lblHistory.place(x=405, y=195)
+        self.lblHistory.place(x=405, y=5)
 
     def coinFlip(self):
         self.coin.set(rnd.choice(['Heads', 'Tail']))
-        self.sendMessage({'action': 'elo', 'name': self.me.get()})
 
     def submitName(self):
         if self.me.get() == '':
@@ -115,16 +114,17 @@ class App(tk.Frame):
             self.lbHistory.insert(0, hist)
         elif data['action'] == 'submitName':
             self.lbHistory.insert(0, '{} joined'.format(data['name']))
-            self.lbPlayer.insert(tk.END, data['name'])
+            # self.lbPlayer.insert(tk.END, data['name'])
         elif data['action'] == 'drop':
             self.lbHistory.insert(0, '{} left'.format(data['name']))
-            try:
-                self.lbPlayer.delete(self.lbPlayer.get(0, tk.END).index(data['name']))
-            except ValueError:
-                pass
-        elif data['action'] == 'elo':
-            self.lbPlayer.delete(0, tk.END)
-            self.lbPlayer.insert(0, data['name'])
+            # try:
+                # self.lbPlayer.delete(self.lbPlayer.get(0, tk.END).index(data['name']))
+            # except ValueError:
+            #     pass
+        # elif data['action'] == 'elo':
+            # self.lbPlayer.delete(0, tk.END)
+            # self.lbPlayer.insert(0, data['name'])
+            # self.sendMessage({'action': 'elo', 'name': self.me.get()})
 
     def setServer(self, serv):
         self.server = serv
