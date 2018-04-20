@@ -33,7 +33,7 @@ class App(tk.Frame):
         self.slider.set(3)
         self.slider.place(x=30, y=75)
 
-        self.btnCoin = tk.Button(self.master, text="Coinflip", width=6, command=self.coinFlip)
+        self.btnCoin = tk.Button(self.master, text="Coinflip", state=tk.DISABLED, width=6, command=self.coinFlip)
         self.btnCoin.place(x=265, y=30)
 
         self.lblCoinResul = tk.Label(self.master, textvariable=self.coin)
@@ -71,6 +71,7 @@ class App(tk.Frame):
 
     def coinFlip(self):
         self.coin.set(rnd.choice(['Heads', 'Tail']))
+        self.sendMessage({'action': 'elo', 'name': self.me.get()})
 
     def submitName(self):
         if self.me.get() == '':
@@ -80,6 +81,7 @@ class App(tk.Frame):
         self.eMe.lower()
         self.btnSubmitName.lower()
         self.btnRoll.configure(state=tk.NORMAL)
+        self.btnCoin.configure(state=tk.NORMAL)
         self.sendMessage(data)
 
     def roll(self):
@@ -120,6 +122,9 @@ class App(tk.Frame):
                 self.lbPlayer.delete(self.lbPlayer.get(0, tk.END).index(data['name']))
             except ValueError:
                 pass
+        elif data['action'] == 'elo':
+            self.lbPlayer.delete(0, tk.END)
+            self.lbPlayer.insert(0, data['name'])
 
     def setServer(self, serv):
         self.server = serv
