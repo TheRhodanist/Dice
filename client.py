@@ -15,6 +15,7 @@ class App(tk.Frame):
         self.me = tk.StringVar()
         self.concResult = tk.StringVar()
         self.resultSum = tk.IntVar()
+        self.coin = tk.StringVar()
         self.server = None
         self.initUI()
 
@@ -34,10 +35,13 @@ class App(tk.Frame):
         self.slider.set(3)
         self.slider.place(x=30, y=75)
 
-        self.btnCoin = tk.Button(self.master, text="Coinflip", width=6, command=self.woot)
+        self.btnCoin = tk.Button(self.master, text="Coinflip", width=6, command=self.coinFlip)
         self.btnCoin.place(x=265, y=30)
 
-        self.btnRoll = tk.Button(self.master, text="Roll", width=6, state=tk.NORMAL, command=self.roll)
+        self.lblCoinResul = tk.Label(self.master, textvariable=self.coin)
+        self.lblCoinResul.place(x=265, y=10)
+
+        self.btnRoll = tk.Button(self.master, text="Roll", width=6, state=tk.DISABLED, command=self.roll)
         self.btnRoll.place(x=265, y=75)
 
         self.lblResultPlayer = tk.Label(self.master, textvariable=self.playerName, font=('Helvetica', 30))
@@ -68,7 +72,7 @@ class App(tk.Frame):
         self.lblHistory.place(x=405, y=195)
 
     def coinFlip(self):
-        return rnd.randint(0,1)
+        self.coin.set(rnd.choice(['Heads', 'Tail']))
 
     def submitName(self):
         if self.me.get() == '':
@@ -90,13 +94,6 @@ class App(tk.Frame):
         self.resultSum.set('')
         self.playerName.set('')
 
-    def woot(self):
-        self.playerName.set("Marci rollt:")
-        self.concResult.set("3 + 5 + 6")
-        self.resultSum.set(30)
-        self.sendMessage(b"Marci:3D6-3/5/6-14")
-        self.lbHistory.insert(0, "foo")
-
     def update(self, _data):
         data = json.loads(_data.decode())
         self.lbHistory.insert(0, data)
@@ -117,8 +114,15 @@ class App(tk.Frame):
             else:
                 self.resultSum.set('')
             self.lbHistory.insert(0, hist)
-        if data['action'] == 'submitName':
+        elif data['action'] == 'submitName':
             self.lbHistory.insert(0, '{} joined'.format(data['name']))
+            self.lbPlayer.insert(tk.END, data['name'])
+        elif data['action'] == 'drop':
+            self.lbHistory.insert(0, '{} left'.format(data['name']))
+            try:
+                self.lbPlayer.delete(self.lbPlayer.get(0, tk.END).index(data['name']))
+            except ValueError:
+                pass
             
 
 
@@ -176,6 +180,8 @@ def main():
     signal.signal(signal.SIGTERM, serviceExit)
     signal.signal(signal.SIGINT, serviceExit)
     def destroy():
+        if app.me.get() != '':
+            app.sendMessage({'action': 'drop', 'name': app.me.get()})
         root.destroy()
     root = tk.Tk()
     root.protocol('WM_DELETE_WINDOW', destroy)
