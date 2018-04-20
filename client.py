@@ -1,8 +1,9 @@
 import tkinter as tk
 import random as rnd
-import threading as threading
+import threading
 import socket
 import json
+import signal
 
 
 class App(tk.Frame):
@@ -136,10 +137,10 @@ class ServerApp(threading.Thread):
     callback = False
 
     def __init__(self, ip, port, function):
-        super().__init__()
+        threading.Thread.__init__(self)
         self.host = ip
         self.port = port
-        self.running = True
+        self.terminate = threading.Event()
         self.callback = function
 
     def run(self):
@@ -150,8 +151,9 @@ class ServerApp(threading.Thread):
         print(self.sock)
 
         #MessageLoop
-        while self.running:
+        while not self.terminate.is_set():
             self.listen()
+        print('socket closed\nexit cleanly')
 
     def send(self,message):
         self.sock.sendall(message)
@@ -163,34 +165,34 @@ class ServerApp(threading.Thread):
             return
         self.callback(message)
 
-    def close(self):
-        self.running = False
-        self.sock.close()
-        print("Socket Closed")
+class ServiceExit(Exception):
+    pass
 
+def serviceExit(signum=signal.SIGINT, frame=None):
+    print('\ninterrupt detected, running cleanup')
+    raise ServiceExit
 
 def main():
-    def close():
+    signal.signal(signal.SIGTERM, serviceExit)
+    signal.signal(signal.SIGINT, serviceExit)
+    def destroy():
         root.destroy()
-        server.close()
-
     root = tk.Tk()
+    root.protocol('WM_DELETE_WINDOW', destroy)
     app = App()
-    root.protocol("WM_DELETE_WINDOW", close)
     server = ServerApp("noobfilter.eu", 11100, app.update)
     app.setServer(server)
-    server.start()
-
-    root.mainloop()
+    try:
+        server.start()
+        root.mainloop()
+    except (ServiceExit, KeyboardInterrupt):
+        pass
+    server.terminate.set()
+    server.sock.close()
+    server.join()
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
 
 
 # if name is clicked in 'player' list, only display results of said player in history
