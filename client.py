@@ -5,7 +5,6 @@ import socket
 import json
 import signal
 
-
 class App(tk.Frame):
     def __init__(self):
         super().__init__()
@@ -18,7 +17,6 @@ class App(tk.Frame):
         self.coin = tk.StringVar()
         self.server = None
         self.initUI()
-
 
     def initUI(self):
         self.frame = tk.Frame(self.master, width=700, height=370)
@@ -96,7 +94,6 @@ class App(tk.Frame):
 
     def update(self, _data):
         data = json.loads(_data.decode())
-        self.lbHistory.insert(0, data)
         if data['action'] == 'roll':
             resStr = ''
             self.concResult.set('')
@@ -123,15 +120,12 @@ class App(tk.Frame):
                 self.lbPlayer.delete(self.lbPlayer.get(0, tk.END).index(data['name']))
             except ValueError:
                 pass
-            
-
 
     def setServer(self, serv):
         self.server = serv
 
     def sendMessage(self, data):
         self.server.send(json.dumps(data).encode())
-
 
 class ServerApp(threading.Thread):
 
@@ -199,6 +193,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# if name is clicked in 'player' list, only display results of said player in history
