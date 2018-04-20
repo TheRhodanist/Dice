@@ -116,6 +116,8 @@ class App(tk.Frame):
             else:
                 self.resultSum.set('')
             self.lbHistory.insert(0, hist)
+        if data['action'] == 'submitName':
+            self.lbHistory.insert(0, '{} joined'.format(data['name']))
             
 
 
