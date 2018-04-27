@@ -185,7 +185,7 @@ def main():
     root = tk.Tk()
     root.protocol('WM_DELETE_WINDOW', destroy)
     app = App()
-    server = ServerApp("noobfilter.eu", 11100, app.update)
+    server = ServerApp("localhost", 11100, app.update)
     app.setServer(server)
     try:
         server.start()

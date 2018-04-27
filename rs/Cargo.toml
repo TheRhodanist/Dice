@@ -1,0 +1,7 @@
+[package]
+name = "dice-server"
+version = "0.1.0"
+authors = ["snwflake <me@snwflake.ml>"]
+
+[dependencies]
+bufstream = "0.1"
