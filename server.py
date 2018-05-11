@@ -1,6 +1,7 @@
 import sys
 import socket
 import select
+import time
 
 HOST        = ''
 CONNECTIONS = []
@@ -45,7 +46,8 @@ def server():
                 except:
                     # connection is broken, maybe broadcast, continue anyway
                     continue
-    
+        time.sleep(0.01)
+
     serverSocket.close()
 
 def broadcast(serverSocket, sock, msg):
