@@ -1,0 +1,22 @@
+image: docker:latest
+stages:
+- build
+variables:
+  DOCKER_DRIVER: overlay
+  DOCKER_USER: dockerci
+services:
+- docker:dind
+before_script:
+- docker info
+job:
+  stage: build
+  tags:
+    - docker
+  script:
+    - version=$(cat VERSION)
+    - echo $version
+    - docker login -u $DOCKER_USER -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker build --pull -t $CI_REGISTRY_IMAGE:lastest .
+    - docker build --pull -t $CI_REGISTRY_IMAGE:$version .
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$version
