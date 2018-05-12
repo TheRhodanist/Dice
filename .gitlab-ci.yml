@@ -3,7 +3,7 @@ stages:
 - build
 variables:
   DOCKER_DRIVER: overlay
-  DOCKER_USER: dockerci
+  DOCKER_USER: gitlab-ci-token 
 services:
 - docker:dind
 before_script:
