@@ -12,6 +12,8 @@ job:
   stage: build
   tags:
     - docker
+  only:
+    - master
   script:
     - version=$(cat VERSION)
     - echo $version
