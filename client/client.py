@@ -29,7 +29,7 @@ class App(tk.Frame):
         self.rD20 = tk.Radiobutton(self.master, text="D20", variable=self.rDice, value=20)
         self.rD20.place(x=140, y=30)
 
-        self.slider = tk.Scale(self.master, showvalue=0, from_=1, to=5, orient=tk.HORIZONTAL, length=180, tickinterval=1, variable=self.sNumDice)
+        self.slider = tk.Scale(self.master, showvalue=0, from_=1, to=6, orient=tk.HORIZONTAL, length=180, tickinterval=1, variable=self.sNumDice)
         self.slider.set(3)
         self.slider.place(x=30, y=75)
 
