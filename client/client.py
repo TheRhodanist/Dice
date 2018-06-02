@@ -30,22 +30,14 @@ class App(tk.Frame):
 #        b_degen = tk.Button(initFrame, text="DEGENESIS",height=10, width=10,command= lambda: des(self,self.initDegenesis,b_dsa,b_degen))
 #        b_degen.pack()
 
-        def ok_click(game):
-            if game == "DSA5":
-                print("dsa")
-                des(self,self.initDSA,cb_games,b_ok)
-            elif game == "Degenesis":
-                print("degenesis")
-                des(self,self.initDegenesis,cb_games,b_ok)
-
-        gamelist= ["DSA5", "Degenesis"]
+        gamelist= ["DSA", "Degenesis"]
 
         cb_games = ttk.Combobox(initFrame, values = gamelist, state='readonly')
         cb_games.pack()
-        b_ok = tk.Button(initFrame, text="OK",height=2, width=10,command= lambda: ok_click(str(cb_games.get())))
-        b_ok.pack()
+        b_ok = tk.Button(initFrame, text="OK",height=2, width=10,command= lambda: des(self,str(cb_games.get()),cb_games,b_ok))
 
         def des(self,func,b1,b2):
+            func = getattr(self,"init"+func)
             func()
             b1.destroy()
             b2.destroy()
