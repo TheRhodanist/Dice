@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.ttk as ttk
 import random as rnd
 import threading
 import socket
@@ -22,12 +23,27 @@ class App(tk.Frame):
     def initUI(self):
         initFrame = tk.Frame(self.master, width=700, height=370)
         initFrame.pack(fill=tk.BOTH, expand=1)
+#
+#        b_dsa = tk.Button(initFrame, text="DSA",height=10, width=10,command= lambda: des(self,self.initDSA,b_dsa,b_degen))
+#        b_dsa.pack()
+#
+#        b_degen = tk.Button(initFrame, text="DEGENESIS",height=10, width=10,command= lambda: des(self,self.initDegenesis,b_dsa,b_degen))
+#        b_degen.pack()
 
-        b_dsa = tk.Button(initFrame, text="DSA",height=10, width=10,command= lambda: des(self,self.initDSA,b_dsa,b_degen))
-        b_dsa.pack()
+        def ok_click(game):
+            if game == "DSA5":
+                print("dsa")
+                des(self,self.initDSA,cb_games,b_ok)
+            elif game == "Degenesis":
+                print("degenesis")
+                des(self,self.initDegenesis,cb_games,b_ok)
 
-        b_degen = tk.Button(initFrame, text="DEGENESIS",height=10, width=10,command= lambda: des(self,self.initDegenesis,b_dsa,b_degen))
-        b_degen.pack()
+        gamelist= ["DSA5", "Degenesis"]
+
+        cb_games = ttk.Combobox(initFrame, values = gamelist, state='readonly')
+        cb_games.pack()
+        b_ok = tk.Button(initFrame, text="OK",height=2, width=10,command= lambda: ok_click(str(cb_games.get())))
+        b_ok.pack()
 
         def des(self,func,b1,b2):
             func()
