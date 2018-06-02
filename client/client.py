@@ -7,7 +7,7 @@ import signal
 
 class App(tk.Frame):
     def __init__(self):
-        super().__init__(None,width=700, height=370)
+        super().__init__(None,width=800, height=370)
         self.rDice = tk.IntVar()
         self.sNumDice = tk.IntVar()
         self.playerName = tk.StringVar()
@@ -19,20 +19,21 @@ class App(tk.Frame):
         self.initUI()
         #self.initDSA()
         #self.initDegenesis()
+
+        
     def initUI(self):
         initFrame = tk.Frame(self.master, width=700, height=370)
         initFrame.pack(fill=tk.BOTH, expand=1)
 
-        b_dsa = tk.Button(initFrame, text="DSA",height=10, width=10,command= lambda: des(self,self.initDSA,b_dsa,b_degen))
+        b_dsa = tk.Button(initFrame, text="DSA",height=2, width=8,command= lambda: des(self,self.initDSA))
         b_dsa.pack()
 
-        b_degen = tk.Button(initFrame, text="DEGENESIS",height=10, width=10,command= lambda: des(self,self.initDegenesis,b_dsa,b_degen))
+        b_degen = tk.Button(initFrame, text="DEGENESIS",height=2, width=8,command= lambda: des(self,self.initDegenesis))
         b_degen.pack()
 
-        def des(self,func,b1,b2):
+        def des(self,func):
             func()
-            b1.destroy()
-            b2.destroy()
+            initFrame.destroy()
 
 
 
@@ -62,44 +63,43 @@ class App(tk.Frame):
         self.btnRoll.place(x=265, y=75)
 
         self.lblResultPlayer = tk.Label(self.master, textvariable=self.playerName, font=('Helvetica', 30))
-        self.lblResultPlayer.place(x=70, y=160)
+        self.lblResultPlayer.place(x=60, y=160)
 
         self.lblResult = tk.Label(self.master, textvariable=self.concResult, font=('Helvetica', 25))
-        self.lblResult.place(x=70, y=230)
+        self.lblResult.place(x=50, y=230)
 
         self.lblResultSum = tk.Label(self.master, textvariable=self.resultSum, font=('Helvetica', 45))
-        self.lblResultSum.place(x=70, y=280)
+        self.lblResultSum.place(x=60, y=280)
 
         # self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
         # self.lbPlayer.place(x=400, y=40)
 
         self.eMe = tk.Entry(self.master, textvariable=self.me)
-        self.eMe.place(x=460, y=10)
+        self.eMe.place(x=480, y=10)
 
         self.btnSubmitName = tk.Button(self.master, text="Ok", command=self.submitName)
-        self.btnSubmitName.place(x=660, y=10)
+        self.btnSubmitName.place(x=680, y=10)
 
         self.lbHistory = tk.Listbox(self.master, width=40, height=16)
-        self.lbHistory.place(x=400, y=40)
+        self.lbHistory.place(x=420, y=40)
 
         # self.lblPlayer = tk.Label(self.master, text="Player", font=('Helvetica', 12))
         # self.lblPlayer.place(x=405, y=5)
 
         self.lblHistory = tk.Label(self.master, text="History", font=('Helvetica', 12))
-        self.lblHistory.place(x=405, y=5)
+        self.lblHistory.place(x=425, y=5)
 
     def initDegenesis(self):
         #self.frame = tk.Frame(self.master, width=700, height=370)
         self.pack(fill=tk.BOTH, expand=1)
         self.master.title("DEGENESIS")
+        self.master.config(width=900,height=500)
 
         self.rD6 = tk.Radiobutton(self.master, text="D6", variable=self.rDice, value=6)
         self.rD6.select()
         self.rD6.place(x=50, y=30)
-        self.rD20 = tk.Radiobutton(self.master, text="D20", variable=self.rDice, value=20)
-        self.rD20.place(x=140, y=30)
 
-        self.slider = tk.Scale(self.master, showvalue=0, from_=1, to=5, orient=tk.HORIZONTAL, length=180, tickinterval=1, variable=self.sNumDice)
+        self.slider = tk.Scale(self.master, showvalue=0, from_=3, to=12, orient=tk.HORIZONTAL, length=180, tickinterval=1, variable=self.sNumDice)
         self.slider.set(3)
         self.slider.place(x=30, y=75)
 
@@ -119,25 +119,25 @@ class App(tk.Frame):
         self.lblResult.place(x=70, y=230)
 
         self.lblResultSum = tk.Label(self.master, textvariable=self.resultSum, font=('Helvetica', 45))
-        self.lblResultSum.place(x=70, y=280)
+        self.lblResultSum.place(x=70, y=310)
 
         # self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
         # self.lbPlayer.place(x=400, y=40)
 
         self.eMe = tk.Entry(self.master, textvariable=self.me)
-        self.eMe.place(x=460, y=10)
+        self.eMe.place(x=500, y=10)
 
         self.btnSubmitName = tk.Button(self.master, text="Ok", command=self.submitName)
         self.btnSubmitName.place(x=660, y=10)
 
-        self.lbHistory = tk.Listbox(self.master, width=40, height=16)
-        self.lbHistory.place(x=400, y=40)
+        self.lbHistory = tk.Listbox(self.master, width=50, height=16)
+        self.lbHistory.place(x=420, y=40)
 
         # self.lblPlayer = tk.Label(self.master, text="Player", font=('Helvetica', 12))
         # self.lblPlayer.place(x=405, y=5)
 
         self.lblHistory = tk.Label(self.master, text="History", font=('Helvetica', 12))
-        self.lblHistory.place(x=405, y=5)
+        self.lblHistory.place(x=425, y=5)
 
 
     def coinFlip(self):
@@ -175,6 +175,9 @@ class App(tk.Frame):
                 resStr += str(n) + ' + '
             else:
                 resStr += str(data['rolls'][-1])
+
+            if len(resStr) > 20:
+                resStr = resStr[:20] + "\n" + resStr[20:]
             self.concResult.set(resStr)
             hist = data['name'] + ' {}D{}: '.format(len(data['rolls']), data['dice']) + self.concResult.get() + '     '
             if data['dice'] == 6:
