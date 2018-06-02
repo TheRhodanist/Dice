@@ -130,7 +130,7 @@ class App(tk.Frame):
         self.btnSubmitName = tk.Button(self.master, text="Ok", command=self.submitName)
         self.btnSubmitName.place(x=660, y=10)
 
-        self.lbHistory = tk.Listbox(self.master, width=50, height=16)
+        self.lbHistory = tk.Listbox(self.master, width=60, height=16)
         self.lbHistory.place(x=420, y=40)
 
         # self.lblPlayer = tk.Label(self.master, text="Player", font=('Helvetica', 12))
