@@ -8,7 +8,7 @@ import signal
 class App(tk.Frame):
     def __init__(self):
         super().__init__(None,width=800, height=370)
-        self.rDice = tk.IntVar()
+        self.rDice = 6
         self.sNumDice = tk.IntVar()
         self.playerName = tk.StringVar()
         self.me = tk.StringVar()
@@ -22,7 +22,7 @@ class App(tk.Frame):
 
         
     def initUI(self):
-        initFrame = tk.Frame(self.master, width=700, height=370)
+        initFrame = tk.Frame(self.master, width=700, height=420)
         initFrame.pack(fill=tk.BOTH, expand=1)
 
         b_dsa = tk.Button(initFrame, text="DSA",height=2, width=8,command= lambda: des(self,self.initDSA))
@@ -91,17 +91,16 @@ class App(tk.Frame):
 
     def initDegenesis(self):
         #self.frame = tk.Frame(self.master, width=700, height=370)
-        self.pack(fill=tk.BOTH, expand=1)
         self.master.title("DEGENESIS")
-        self.master.config(width=900,height=500)
+        self.master.config(width=800,height=400)
+        self.config(width=800,height=400)
+        self.pack(fill=tk.BOTH, expand=1)
+        
 
-        self.rD6 = tk.Radiobutton(self.master, text="D6", variable=self.rDice, value=6)
-        self.rD6.select()
-        self.rD6.place(x=50, y=30)
 
-        self.slider = tk.Scale(self.master, showvalue=0, from_=3, to=12, orient=tk.HORIZONTAL, length=180, tickinterval=1, variable=self.sNumDice)
+        self.slider = tk.Scale(self.master, showvalue=0, from_=3, to=12, orient=tk.HORIZONTAL, length=220, tickinterval=1, variable=self.sNumDice)
         self.slider.set(3)
-        self.slider.place(x=30, y=75)
+        self.slider.place(x=20, y=55)
 
         self.btnCoin = tk.Button(self.master, text="Coinflip", state=tk.DISABLED, width=6, command=self.coinFlip)
         self.btnCoin.place(x=265, y=30)
@@ -113,13 +112,13 @@ class App(tk.Frame):
         self.btnRoll.place(x=265, y=75)
 
         self.lblResultPlayer = tk.Label(self.master, textvariable=self.playerName, font=('Helvetica', 30))
-        self.lblResultPlayer.place(x=70, y=160)
+        self.lblResultPlayer.place(x=20, y=160)
 
         self.lblResult = tk.Label(self.master, textvariable=self.concResult, font=('Helvetica', 25))
-        self.lblResult.place(x=70, y=230)
+        self.lblResult.place(x=20, y=230)
 
         self.lblResultSum = tk.Label(self.master, textvariable=self.resultSum, font=('Helvetica', 45))
-        self.lblResultSum.place(x=70, y=310)
+        self.lblResultSum.place(x=20, y=310)
 
         # self.lbPlayer = tk.Listbox(self.master, width=40, height=8)
         # self.lbPlayer.place(x=400, y=40)
@@ -155,10 +154,10 @@ class App(tk.Frame):
         self.sendMessage(data)
 
     def roll(self):
-        data = {'action': 'roll', 'dice': self.rDice.get(), 'name': self.me.get()}
+        data = {'action': 'roll', 'dice': self.rDice, 'name': self.me.get()}
         data['rolls'] = []
         for n in range(0, self.sNumDice.get()):
-            data['rolls'].append(rnd.randint(1, self.rDice.get()))
+            data['rolls'].append(rnd.randint(1, self.rDice))
         self.sendMessage(data)
         self.concResult.set('')
         self.resultSum.set('')
