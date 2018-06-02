@@ -35,7 +35,8 @@ class App(tk.Frame):
         cb_games = ttk.Combobox(initFrame, values = gamelist, state='readonly')
         cb_games.pack()
         b_ok = tk.Button(initFrame, text="OK",height=2, width=10,command= lambda: des(self,str(cb_games.get()),cb_games,b_ok))
-
+        b_ok.pack()
+        
         def des(self,func,b1,b2):
             func = getattr(self,"init"+func)
             func()
